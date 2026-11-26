@@ -2,8 +2,8 @@
 
 一个 Hydro 站点的篡改猴（Tampermonkey / Violentmonkey / Userscripts）美化脚本。
 
-- 站点：`https://zsoj.gbfish.cn/`（以及脚本头部 `@match` 里的其它 Hydro 站点）
-- 当前版本：**v1.8.0**
+- 站点：`https://zsoj.gbfish.cn/`、内网镜像 `http://10.3.44.224/`（含带端口的写法，如 `http://10.3.44.224:8080/`），以及脚本头部 `@match` 里的其它 Hydro 站点
+- 当前版本：**v1.8.1**
 - 脚本文件：`Hydro-UI-Beautifier.user.js`
 - 历史版本：`versions/Hydro-UI-Beautifier-<版本号>.user.js`
 
@@ -21,6 +21,12 @@ https://raw.githubusercontent.com/lscminxi/hydro-better/main/Hydro-UI-Beautifier
 
 首次本地安装的话，打开 `Hydro-UI-Beautifier.user.js` 把内容复制进「新建脚本」也可以，但那样脚本管理器不认识更新源，只能依赖脚本内置的更新检测（见下）。
 
+## v1.8.1 更新内容
+
+- 重新支持内网地址 `10.3.44.224`：新增 `http://10.3.44.224/*`、`https://10.3.44.224/*` 以及带端口的匹配规则（`http(s)://10.3.44.224:*`）。
+- 顺带补上 `http://zsoj.gbfish.cn/*`（HTTP 访问也能生效）。
+- ⚠️ 若脚本管理器开启了「仅 HTTPS」或对内网地址有限制，需要在管理器里允许该站点运行脚本；更新检查走 `GM_xmlhttpRequest`，不受局域网环境限制。
+
 ## v1.8.0 更新内容
 
 1. **自动更新检测**
@@ -33,6 +39,17 @@ https://raw.githubusercontent.com/lscminxi/hydro-better/main/Hydro-UI-Beautifier
    - `pre` / `pre > code` 使用实色背景（深色 `#1b2030`，浅色卡片下 `#f6f8fc`），不再让背景图和半透明卡片透过来。
    - 自动跳过程序坞 / Monaco / CodeMirror / 设置面板里的编辑器，不会染指评测机代码框。
    - 消息页面里的代码块同样生效。
+
+## 支持的站点
+
+| 地址 | 说明 |
+| --- | --- |
+| `https://zsoj.gbfish.cn/`、`http://zsoj.gbfish.cn/` | 公网站点 |
+| `http://10.3.44.224/`、`https://10.3.44.224/` | 内网镜像 |
+| `http://10.3.44.224:<端口>`、`https://10.3.44.224:<端口>` | 内网镜像（非 80/443 端口） |
+| `https://hydro.ac/`、`https://oier.group/` | 其它 Hydro 站点 |
+
+新增站点时，只需在脚本头部追加一条 `@match`，并在本表登记。
 
 ## 发布新版本（维护者）
 
