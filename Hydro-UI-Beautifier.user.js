@@ -7,6 +7,7 @@
 // @match        https://zsoj.gbfish.cn/*
 // @match        https://hydro.ac/*
 // @match        https://oier.group/*
+// @match        https://10.3.44.224/*
 // @updateURL    https://raw.githubusercontent.com/lscminxi/hydro-better/main/Hydro-UI-Beautifier.user.js
 // @downloadURL  https://raw.githubusercontent.com/lscminxi/hydro-better/main/Hydro-UI-Beautifier.user.js
 // @supportURL   https://github.com/lscminxi/hydro-better
