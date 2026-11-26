@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hydro UI Beautifier
 // @namespace    https://zsoj.gbfish.cn/
-// @version      1.8.1
+// @version      1.9.0
 // @description  Hydro 全站美化
 // @author       lrbkdgw
 // @match        https://zsoj.gbfish.cn/*
@@ -12,7 +12,6 @@
 // @match        https://10.3.44.224:*
 // @match        https://hydro.ac/*
 // @match        https://oier.group/*
-// @match        https://10.3.44.224/*
 // @updateURL    https://raw.githubusercontent.com/lscminxi/hydro-better/main/Hydro-UI-Beautifier.user.js
 // @downloadURL  https://raw.githubusercontent.com/lscminxi/hydro-better/main/Hydro-UI-Beautifier.user.js
 // @supportURL   https://github.com/lscminxi/hydro-better
@@ -23,6 +22,8 @@
 // @connect      raw.githubusercontent.com
 // @connect      api.github.com
 // @connect      github.com
+// @connect      codeload.github.com
+// @connect      objects.githubusercontent.com
 // @run-at       document-idle
 // ==/UserScript==
 
@@ -32,16 +33,21 @@
     if (window.__HYDRO_BEAUTIFIER_V170__) return;
     window.__HYDRO_BEAUTIFIER_V170__ = true;
 
-    const VERSION = '1.8.1';
+    const VERSION = '1.9.0';
     // 自动更新：源仓库固定指向本脚本的 GitHub 仓库，raw 地址即 @downloadURL。
     const UPDATE = {
         repo: 'lscminxi/hydro-better',
         branch: 'main',
         file: 'Hydro-UI-Beautifier.user.js',
-        api: 'https://api.github.com/repos/lscminxi/hydro-better/commits?path=Hydro-UI-Beautifier.user.js&per_page=1',
         raw: 'https://raw.githubusercontent.com/lscminxi/hydro-better/main/Hydro-UI-Beautifier.user.js',
+        // GitHub API 在国内网络下通常比 raw.githubusercontent.com 好访问，这里作为备用更新源。
+        commits: 'https://api.github.com/repos/lscminxi/hydro-better/commits?path=Hydro-UI-Beautifier.user.js&per_page=1',
+        patch: 'https://github.com/lscminxi/hydro-better/commit/', // + sha + '.patch'
+        codeload: 'https://codeload.github.com/lscminxi/hydro-better/tar.gz/refs/heads/main',
         page: 'https://github.com/lscminxi/hydro-better',
-        interval: 6 * 60 * 60 * 1000
+        interval: 30 * 60 * 1000,
+        retryInterval: 10 * 60 * 1000,
+        timeout: 6000
     };
     const KEY = 'hydro_beautifier_v170';
     const OLD_KEYS = ['hydro_beautifier_v160', 'hydro_beautifier_v150', 'hydro_beautifier_v141', 'hydro_beautifier_v14', 'hydro_beautifier_v13', 'hydro_beautifier_v12', 'hydro_beautifier_v11'];
@@ -365,10 +371,11 @@ body.hb170-border-off .hb170-card{border-color:transparent!important}
 html.hb170-font-scale{font-size:calc(var(--hb-base-font-size,13px) * var(--hb-font-scale,1))!important}
 .main .section__table-container.hb170-card table{margin:0!important}
 #hb170-trigger,#hb170-panel{--hb-edge:20px;--hb-edge-right:max(var(--hb-edge),env(safe-area-inset-right,0px));--hb-edge-bottom:max(var(--hb-edge),env(safe-area-inset-bottom,0px));--hb-trigger-size:48px;position:fixed!important;right:var(--hb-edge-right)!important;box-sizing:border-box}
-#hb170-trigger{bottom:var(--hb-edge-bottom)!important;z-index:2147483000!important;display:grid;place-items:center;width:var(--hb-trigger-size);height:var(--hb-trigger-size);min-width:0;padding:0!important;border:var(--hb170-border-width,1px) solid var(--hb-global-border)!important;border-radius:50%!important;background:var(--hb-trigger-bg,var(--hb-global-bg))!important;background-clip:padding-box!important;color:var(--hb-trigger-ink,var(--hb-text,#f0f0f5))!important;font:22px/1 system-ui,sans-serif;cursor:pointer;box-shadow:var(--hb-global-shadow)!important;backdrop-filter:blur(var(--hb-global-blur));-webkit-backdrop-filter:blur(var(--hb-global-blur));touch-action:manipulation}
+#hb170-trigger{position:fixed!important;bottom:var(--hb-edge-bottom)!important;z-index:2147483000!important;display:grid;place-items:center;width:var(--hb-trigger-size);height:var(--hb-trigger-size);min-width:0;padding:0!important;border:var(--hb170-border-width,1px) solid var(--hb-global-border)!important;border-radius:50%!important;background:var(--hb-trigger-bg,var(--hb-global-bg))!important;background-clip:padding-box!important;color:var(--hb-trigger-ink,var(--hb-text,#f0f0f5))!important;font:22px/1 system-ui,sans-serif;cursor:pointer;box-shadow:var(--hb-global-shadow)!important;backdrop-filter:blur(var(--hb-global-blur));-webkit-backdrop-filter:blur(var(--hb-global-blur));touch-action:manipulation}
 body button.omnibar-toggle[data-global-hotkey="ctrl+k:click"]{box-sizing:border-box;width:48px!important;height:48px!important;min-width:0;padding:0!important;border:var(--hb170-border-width,1px) solid var(--hb-global-border)!important;border-radius:50%!important;background:var(--hb-trigger-bg,var(--hb-global-bg))!important;background-clip:padding-box!important;color:var(--hb-trigger-ink,var(--hb-text,#f0f0f5))!important;box-shadow:var(--hb-global-shadow)!important;backdrop-filter:blur(var(--hb-global-blur));-webkit-backdrop-filter:blur(var(--hb-global-blur));touch-action:manipulation}
 body button.omnibar-toggle[data-global-hotkey="ctrl+k:click"]:focus-visible{outline:2px solid var(--hb-accent)!important;outline-offset:2px!important}
-#hb170-trigger.hb170-update-available::after{content:""!important;position:absolute!important;top:2px!important;right:2px!important;width:10px!important;height:10px!important;border-radius:50%!important;background:#ff6b6b!important;box-shadow:0 0 0 2px var(--hb-trigger-bg,var(--hb-global-bg))!important}
+#hb170-trigger.hb170-update-available::after{content:""!important;position:absolute!important;top:3px!important;right:3px!important;width:11px!important;height:11px!important;border-radius:50%!important;background:#ff5252!important;box-shadow:0 0 0 2px #fff3!important;animation:hb170-pulse 1.8s ease-in-out infinite!important}
+@keyframes hb170-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.18);opacity:.78}}
 #hb170-trigger:focus-visible,#hb170-panel :is(button,input,select,textarea):focus-visible{outline:2px solid var(--hb-accent)!important;outline-offset:2px!important}
 #hb170-panel{--hb-panel-bottom:calc(var(--hb-edge-bottom) + var(--hb-trigger-size) + 12px);bottom:var(--hb-panel-bottom)!important;z-index:2147483001!important;width:min(440px,calc(100vw - var(--hb-edge-right) - max(var(--hb-edge),env(safe-area-inset-left,0px))));max-height:min(86vh,calc(100vh - var(--hb-panel-bottom) - 12px));max-height:min(86dvh,calc(100dvh - var(--hb-panel-bottom) - max(12px,env(safe-area-inset-top,0px))));display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--hb-panel-line,#ffffff24);border-radius:20px!important;background:var(--hb-panel-bg,#1e2130f7)!important;color:var(--hb-text,#f0f0f5)!important;box-shadow:0 18px 60px #0008;backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);font:13px/1.45 system-ui,sans-serif}
 #hb170-panel[hidden]{display:none!important}#hb170-panel *{box-sizing:border-box}
@@ -498,7 +505,7 @@ ${color('background','纯色背景')}${color('gradientA','渐变颜色 A')}${col
 <section data-page="tools" hidden><h3>页面诊断</h3><div class="grid"><button class="action" id="hb-scan">重新扫描卡片</button><button class="action secondary" id="hb-highlight">高亮识别结果</button></div><div class="status" id="hb-diagnostics">等待扫描</div><h3>配置管理</h3><div class="grid"><button class="action" id="hb-export">导出 JSON</button><button class="action secondary" id="hb-import">导入 JSON</button></div><input id="hb-file" type="file" accept=".json,application/json" hidden><div class="grid" style="margin-top:8px"><button class="action secondary" id="hb-copy">复制配置</button><button class="action secondary" id="hb-reset">恢复默认</button></div><h3>撤销/重做</h3><div class="grid"><button class="action secondary" id="hb-undo">撤销</button><button class="action secondary" id="hb-redo">重做</button></div><h3>自动更新</h3><div class="status" id="hb-update-status">尚未检查更新</div>
 <div class="grid" style="margin-top:8px"><button class="action" id="hb-update-check">立即检查更新</button><button class="action secondary" id="hb-update-install" hidden>安装新版本</button></div>
 <div class="grid" style="margin-top:8px"><button class="action secondary" id="hb-update-page">打开 GitHub 仓库</button><button class="action secondary" id="hb-update-copy">复制脚本地址</button></div>
-<p class="hint">脚本会读取 GitHub 上的最新版本号（每 6 小时最多自动检查一次），发现新版本时右下角按钮与标题会提示。点击“安装新版本”会打开脚本地址，由篡改猴 / Violentmonkey 接管安装；把脚本地址填进管理器的“从 URL 安装”即可获得管理器自带的自动更新。</p><p class="hint">配置只保存在当前站点浏览器本地，不会修改 Hydro 服务端数据。</p></section>
+<p class="hint">脚本会读取 GitHub 上的最新版本号（每 30 分钟最多自动检查一次，失败 10 分钟后重试）；依次尝试 raw.githubusercontent.com → GitHub API + commit patch → codeload 源码包，某个源被墙也能查到。发现新版本时右下角按钮与标题会提示。点击“安装新版本”会打开脚本地址，由篡改猴 / Violentmonkey 接管安装；把脚本地址填进管理器的“从 URL 安装”即可获得管理器自带的自动更新。</p><p class="hint">配置只保存在当前站点浏览器本地，不会修改 Hydro 服务端数据。</p></section>
 </main><footer id="hb170-foot"><span style="font-size:11px;opacity:.65">更改自动保存</span><button id="hb-close">完成</button></footer>`;
 
     const history = [clone(settings)];
@@ -777,28 +784,47 @@ ${color('background','纯色背景')}${color('gradientA','渐变颜色 A')}${col
     function writeUpdateCache(patch) {
         try { localStorage.setItem(UPDATE_KEY, JSON.stringify({ ...(readUpdateCache() || {}), ...patch })); } catch {}
     }
-    // 优先走 GM_xmlhttpRequest（不受 CORS 限制），没有授权时退回 fetch。
-    function remoteText(url, timeout = 12000) {
+    // 统一请求入口：GM_xmlhttpRequest（绕过 CORS）/ 旧版 GM_xmlHttpRequest / fetch。
+    function gmRequest(url, { timeout = UPDATE.timeout, binary = false } = {}) {
+        const gm = typeof GM_xmlhttpRequest === 'function' ? GM_xmlhttpRequest
+            : typeof GM_xmlHttpRequest === 'function' ? GM_xmlHttpRequest
+            : (typeof window !== 'undefined' && (window.GM_xmlhttpRequest || window.GM_xmlHttpRequest)) || null;
+        if (typeof gm !== 'function') return null;
         return new Promise((resolve, reject) => {
-            const gm = typeof GM_xmlhttpRequest === 'function' ? GM_xmlhttpRequest : window.GM_xmlhttpRequest;
-            if (typeof gm === 'function') {
-                try {
-                    gm({
-                        method: 'GET', url, timeout, headers: { 'Cache-Control': 'no-cache', Accept: 'text/plain,*/*' },
-                        onload: r => (r.status >= 200 && r.status < 300) ? resolve(r.responseText) : reject(new Error('HTTP ' + r.status)),
-                        onerror: () => reject(new Error('网络错误')),
-                        ontimeout: () => reject(new Error('请求超时'))
-                    });
-                    return;
-                } catch (e) { /* 落到 fetch */ }
-            }
-            const ctrl = typeof AbortController === 'function' ? new AbortController() : null;
-            const timer = setTimeout(() => ctrl?.abort(), timeout);
-            fetch(url, { cache: 'no-store', signal: ctrl?.signal })
-                .then(r => r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status)))
-                .then(t => { clearTimeout(timer); resolve(t); })
-                .catch(e => { clearTimeout(timer); reject(e); });
+            try {
+                gm({
+                    method: 'GET', url, timeout, responseType: binary ? 'arraybuffer' : 'text',
+                    headers: { 'Cache-Control': 'no-cache', Accept: binary ? '*/*' : 'text/plain,*/*' },
+                    onload: r => {
+                        if (r.status < 200 || r.status >= 300) return reject(new Error('HTTP ' + r.status));
+                        resolve(binary ? r.response : r.responseText);
+                    },
+                    onerror: () => reject(new Error('网络错误')),
+                    ontimeout: () => reject(new Error('请求超时')),
+                    onabort: () => reject(new Error('请求被中断'))
+                });
+            } catch (e) { reject(e); }
         });
+    }
+    function remoteText(url, timeout = UPDATE.timeout) {
+        const viaGm = gmRequest(url, { timeout });
+        if (viaGm) return viaGm;
+        const ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+        const timer = setTimeout(() => ctrl?.abort(), timeout);
+        return fetch(url, { cache: 'no-store', signal: ctrl?.signal })
+            .then(r => r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status)))
+            .then(t => { clearTimeout(timer); return t; })
+            .catch(e => { clearTimeout(timer); throw new Error(e?.name === 'AbortError' ? '请求超时' : (e?.message || String(e))); });
+    }
+    function remoteBuffer(url, timeout = 15000) {
+        const viaGm = gmRequest(url, { timeout, binary: true });
+        if (viaGm) return viaGm;
+        const ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+        const timer = setTimeout(() => ctrl?.abort(), timeout);
+        return fetch(url, { cache: 'no-store', signal: ctrl?.signal })
+            .then(r => r.ok ? r.arrayBuffer() : Promise.reject(new Error('HTTP ' + r.status)))
+            .then(b => { clearTimeout(timer); return b; })
+            .catch(e => { clearTimeout(timer); throw e; });
     }
     function parseScriptMeta(text) {
         const head = String(text || '').split('// ==/UserScript==')[0];
@@ -807,13 +833,75 @@ ${color('background','纯色背景')}${color('gradientA','渐变颜色 A')}${col
     }
     // 校验远端脚本确实是本脚本，避免把错误页面当成新版本。
     function looksLikeScript(text) { return /==UserScript==/.test(text) && /@name\s+Hydro UI Beautifier/.test(text); }
-    function latestCommitDate(api) {
-        return remoteText(api, 10000).then(txt => {
-            const data = JSON.parse(txt);
-            return Array.isArray(data) && data[0]?.commit?.committer?.date ? String(data[0].commit.committer.date) : '';
-        }).catch(() => '');
+    // 极简 tar.gz 读取：codeload 下载的源码包只有几百 KB，够用来取出脚本里的 @version。
+    function gunzip(bytes) {
+        if (typeof DecompressionStream !== 'function' || typeof Response !== 'function') return Promise.reject(new Error('浏览器不支持解压'));
+        const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+        return new Response(stream).arrayBuffer().then(b => new Uint8Array(b));
     }
-    const updateState = { checked: 0, remote: '', download: UPDATE.raw, url: '', error: '' };
+    function untar(bytes, wanted) {
+        const decoder = new TextDecoder();
+        let offset = 0;
+        while (offset + 512 <= bytes.length) {
+            const header = bytes.subarray(offset, offset + 512);
+            if (header.every(b => b === 0)) break;
+            const name = decoder.decode(header.subarray(0, 100)).replace(/\0.*$/, '');
+            const sizeField = decoder.decode(header.subarray(124, 136)).replace(/\0.*$/, '').trim();
+            const size = parseInt(sizeField, 8) || 0;
+            const body = bytes.subarray(offset + 512, offset + 512 + size);
+            if (name === wanted || name.endsWith('/' + wanted)) return decoder.decode(body);
+            offset += 512 + Math.ceil(size / 512) * 512;
+        }
+        return '';
+    }
+    // 源 1：raw.githubusercontent.com 上的脚本（首选，能拿到完整的 @downloadURL）。
+    function probeRaw() {
+        return remoteText(UPDATE.raw).then(text => {
+            if (!looksLikeScript(text)) throw new Error('远端文件不是脚本');
+            const meta = parseScriptMeta(text);
+            if (!meta.version) throw new Error('无法读取远端版本号');
+            return { version: meta.version, download: meta.download || UPDATE.raw, source: 'raw' };
+        });
+    }
+    // 源 2：GitHub API 提交列表 + 该提交的 .patch（部分网络访问不了 raw.githubusercontent.com 时使用）。
+    function probeCommit() {
+        return remoteText(UPDATE.commits).then(txt => {
+            const data = JSON.parse(txt);
+            const commit = Array.isArray(data) ? data[0] : null;
+            if (!commit?.sha) throw new Error('提交列表为空');
+            const date = commit.commit?.committer?.date || '';
+            return remoteText(UPDATE.patch + commit.sha + '.patch', 12000).then(patch => {
+                const version = (patch.match(/^\+\/\/\s*@version\s+(\S+)/m) || [])[1] || '';
+                if (!version) throw new Error('patch 中没有版本号');
+                return { version, download: UPDATE.raw, source: 'patch', commitDate: date, sha: String(commit.sha).slice(0, 7) };
+            });
+        });
+    }
+    // 源 3：codeload 源码包（前两个都失败时的兜底）。
+    function probeCodeload() {
+        return remoteBuffer(UPDATE.codeload, 20000)
+            .then(bytes => gunzip(bytes))
+            .then(bytes => untar(bytes, UPDATE.file))
+            .then(text => {
+                if (!looksLikeScript(text)) throw new Error('源码包里没有脚本');
+                const meta = parseScriptMeta(text);
+                if (!meta.version) throw new Error('无法读取版本号');
+                return { version: meta.version, download: UPDATE.raw, source: 'codeload' };
+            });
+    }
+    const PROBES = [['raw', probeRaw], ['patch', probeCommit], ['codeload', probeCodeload]];
+    function probeRemote() {
+        const errors = [];
+        let chain = Promise.reject(new Error('no probe'));
+        for (const [name, probe] of PROBES) {
+            chain = chain.catch(() => probe().catch(err => {
+                errors.push(`${name}: ${err?.message || err}`);
+                throw err;
+            }));
+        }
+        return chain.catch(() => { throw new Error(errors.join('；') || '全部更新源均不可用'); });
+    }
+    const updateState = { checked: 0, remote: '', download: UPDATE.raw, url: '', error: '', source: '', detail: '' };
     function paintUpdateStatus(extra) {
         const box = $('#hb-update-status', panel), btn = $('#hb-update-install', panel), meta = $('#hb170-head-meta');
         const newer = !!updateState.remote && compareVersion(updateState.remote, VERSION) > 0;
@@ -822,6 +910,8 @@ ${color('background','纯色背景')}${color('gradientA','渐变颜色 A')}${col
             if (updateState.error) lines.push(`检查失败：${updateState.error}`);
             else if (updateState.remote) lines.push(newer ? `发现新版本：v${updateState.remote}` : `已是最新版本（远端 v${updateState.remote}）`);
             else lines.push('尚未检查更新');
+            if (updateState.source) lines.push(`更新源：${updateState.source}`);
+            if (updateState.detail) lines.push(updateState.detail);
             if (updateState.checked) {
                 let time = '未知';
                 try { time = new Date(updateState.checked).toLocaleString(); } catch {}
@@ -840,31 +930,35 @@ ${color('background','纯色背景')}${color('gradientA','渐变颜色 A')}${col
     function checkUpdate(force = false, silent = true) {
         const cache = readUpdateCache();
         if (!force && cache) {
-            if (cache.remote) { updateState.remote = cache.remote; updateState.download = cache.download || UPDATE.raw; updateState.url = cache.url || ''; updateState.checked = cache.checked || 0; }
-            if (cache.checked && Date.now() - Number(cache.checked) < UPDATE.interval) { paintUpdateStatus(); return Promise.resolve(!!updateState.remote && compareVersion(updateState.remote, VERSION) > 0); }
+            // 先显示上次的结果，界面不会一直停在「尚未检查更新」。
+            if (cache.remote) { updateState.remote = cache.remote; updateState.download = cache.download || UPDATE.raw; updateState.url = cache.url || ''; updateState.source = cache.source || ''; updateState.detail = cache.detail || ''; }
+            updateState.checked = cache.checked || 0;
+            updateState.error = cache.error || '';
+            const fresh = cache.checked && Date.now() - Number(cache.checked) < (cache.error ? UPDATE.retryInterval : UPDATE.interval);
+            if (fresh) { paintUpdateStatus(); return Promise.resolve(!!updateState.remote && compareVersion(updateState.remote, VERSION) > 0); }
+            paintUpdateStatus();
         }
         if (updateChecking) return updateChecking;
         updateState.error = '';
         const box = $('#hb-update-status', panel);
         if (box && force) box.textContent = '正在检查更新…';
-        updateChecking = Promise.all([remoteText(UPDATE.raw), latestCommitDate(UPDATE.api)])
-            .then(([text, date]) => {
-                if (!looksLikeScript(text)) throw new Error('远端文件格式不匹配');
-                const meta = parseScriptMeta(text);
-                if (!meta.version) throw new Error('无法读取远端版本号');
-                updateState.remote = meta.version;
-                updateState.download = meta.download || UPDATE.raw;
-                updateState.url = updateState.download + '?v=' + encodeURIComponent(meta.version);
+        updateChecking = probeRemote()
+            .then(res => {
+                updateState.remote = res.version;
+                updateState.download = res.download || UPDATE.raw;
+                updateState.url = updateState.download + '?v=' + encodeURIComponent(res.version);
+                updateState.source = res.source;
+                updateState.detail = res.commitDate ? `最新提交：${res.sha ? res.sha + ' · ' : ''}${res.commitDate}` : '';
                 updateState.checked = Date.now();
-                writeUpdateCache({ remote: meta.version, download: updateState.download, url: updateState.url, commitDate: date, checked: updateState.checked, error: '' });
-                const newer = compareVersion(meta.version, VERSION) > 0;
+                writeUpdateCache({ remote: res.version, download: updateState.download, url: updateState.url, source: res.source, detail: updateState.detail, commitDate: res.commitDate || '', checked: updateState.checked, error: '' });
+                const newer = compareVersion(res.version, VERSION) > 0;
                 paintUpdateStatus();
                 if (newer) {
                     // 同一个新版本只提示一次，避免每次刷新都弹提醒。
                     const notified = String(readUpdateCache()?.notifiedFor || '').split(',').filter(Boolean);
-                    if (!notified.includes(meta.version)) {
-                        writeUpdateCache({ notifiedFor: [...notified, meta.version].slice(-5).join(',') });
-                        toast(`Hydro UI Beautifier 有新版本 v${meta.version}`);
+                    if (!notified.includes(res.version)) {
+                        writeUpdateCache({ notifiedFor: [...notified, res.version].slice(-5).join(',') });
+                        toast(`Hydro UI Beautifier 有新版本 v${res.version}`);
                     }
                 } else if (!silent) {
                     toast('已是最新版本 v' + VERSION);
@@ -900,7 +994,7 @@ ${color('background','纯色背景')}${color('gradientA','渐变颜色 A')}${col
     function setPanelOpen(open) {
         panel.hidden = !open;
         trigger.setAttribute('aria-expanded', String(open));
-        if (open) { scanCards(); $('.active[data-tab]',panel)?.focus({preventScroll:true}); }
+        if (open) { scanCards(); paintUpdateStatus(); checkUpdate(false, true); $('.active[data-tab]',panel)?.focus({preventScroll:true}); }
         else if (panel.contains(document.activeElement) || document.activeElement === document.body) trigger.focus({preventScroll:true});
     }
     trigger.addEventListener('click',()=>setPanelOpen(panel.hidden));
@@ -972,9 +1066,10 @@ ${color('background','纯色背景')}${color('gradientA','渐变颜色 A')}${col
     }
 
     mount(); applyStickyFooter(); syncUI(); refreshBaseFontSize(); applyAll();
-    // 启动后稍等片刻再检查更新，不阻塞页面渲染。
-    if (document.readyState === 'complete') setTimeout(()=>{ checkUpdate(false, true); }, 2500);
-    else window.addEventListener('load', () => setTimeout(()=>{ checkUpdate(false, true); }, 2500), {once:true});
+    // 自动更新：启动后先渲染页面，再检查（不阻塞首屏）。
+    paintUpdateStatus();
+    setTimeout(() => { checkUpdate(false, true); }, 1200);
+    if (document.readyState !== 'complete') window.addEventListener('load', () => setTimeout(() => { checkUpdate(false, true); }, 800), { once: true });
     window.addEventListener('resize',()=>{refreshBaseFontSize();applyStickyFooter();refreshProblemNavigation();});
     // 合并相关变动，避免每次文本、编辑器或消息更新都触发全页扫描。
     const ownUI = '#hb170-panel,#hb170-trigger,#hb170-background,#hb170-toast,.hb170-media-frame';
