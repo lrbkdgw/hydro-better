@@ -3,7 +3,7 @@
 一个 Hydro 站点的篡改猴（Tampermonkey / Violentmonkey / Userscripts）美化脚本。
 
 - 站点：`https://zsoj.gbfish.cn/`、内网镜像 `http://10.3.44.224/`（含带端口的写法，如 `http://10.3.44.224:8080/`），以及脚本头部 `@match` 里的其它 Hydro 站点
-- 当前版本：**v1.8.1**
+- 当前版本：**v1.9.0**
 - 脚本文件：`Hydro-UI-Beautifier.user.js`
 - 历史版本：`versions/Hydro-UI-Beautifier-<版本号>.user.js`
 
@@ -15,11 +15,36 @@
 https://raw.githubusercontent.com/lscminxi/hydro-better/main/Hydro-UI-Beautifier.user.js
 ```
 
+如果 `raw.githubusercontent.com` 打不开（国内很常见），用 jsDelivr 镜像手动安装一次：
+
+```
+https://cdn.jsdelivr.net/gh/lscminxi/hydro-better@main/Hydro-UI-Beautifier.user.js
+```
+
+装好 v1.9.0 之后就不再依赖镜像了：脚本自带的三条更新通道（raw / GitHub API / codeload）任一条可用即可。
+
 - Tampermonkey：仪表盘 → 实用工具 → 「从 URL 安装」→ 粘贴上面的地址。
 - Violentmonkey：设置 → 「从 URL 安装」。
 - 或者直接打开上面的地址，脚本管理器会自动弹出安装页。
 
 首次本地安装的话，打开 `Hydro-UI-Beautifier.user.js` 把内容复制进「新建脚本」也可以，但那样脚本管理器不认识更新源，只能依赖脚本内置的更新检测（见下）。
+
+## v1.9.0 更新内容（修复「检查更新没效果」）
+
+现象与原因：
+
+1. 原来只从 `raw.githubusercontent.com` 取版本号，这个域名在很多网络里连不上，于是永远显示「检查失败」。
+2. 检查结果（包括失败）缓存 6 小时，失败后不会重试，看起来就像「没反应」。
+3. 面板打开时不会重新读取状态，只有页面加载后那一次结果可见，容易以为功能没生效。
+
+现在的做法：
+
+- **三个更新源自动降级**：`raw.githubusercontent.com` → `GitHub API 提交列表 + 该提交的 .patch` → `codeload 源码包（tar.gz，浏览器内解压）`。只要有一个能连上就能拿到版本号；面板里会显示实际用的是哪个源。
+- **失败也会显示原因**：面板列出每个源的失败原因（如 `HTTP 404`、`网络错误`、`请求超时`），不再是静默失败。
+- **缓存更合理**：成功 30 分钟内不重复请求，失败 10 分钟后自动重试；打开设置面板会立即刷新状态，也可随时点「立即检查更新」强制检查。
+- **红点更明显**：发现新版时悬浮按钮上的红点带呼吸动画，标题栏显示「有新版本 vX.Y.Z」。
+- 请求统一走 `GM_xmlhttpRequest`（没有 GM API 时退回 `fetch`），超时 6 秒，不会卡住页面。
+- 同时清掉了 v1.8.1 头部重复的 `@match`。
 
 ## v1.8.1 更新内容
 
